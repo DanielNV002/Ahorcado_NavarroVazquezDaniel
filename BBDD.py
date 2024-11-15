@@ -92,18 +92,26 @@ class BBDD:
         return [fila[0] for fila in self.cursor.fetchall()]
 
     def getJugador(self, nombre):
-        """Obtener todos los jugadores."""
-        jugador = self.cursor.execute("SELECT * FROM jugadores WHERE nombre = ?", (nombre,))
-        return jugador
-
+        """Obtener los datos de un jugador de la base de datos."""
+        self.cursor.execute("SELECT nombre, ganadas, perdidas FROM jugadores WHERE nombre = ?", (nombre,))
+        jugador = self.cursor.fetchone()  # Usar fetchone() para obtener una fila
+        if jugador:
+            return {"nombre": jugador[0], "ganadas": jugador[1], "perdidas": jugador[2]}
+        else:
+            return None  # Si no se encuentra el jugador, retornar None
 
     def guardarJugador(self, nombre, ganadas, perdidas):
         """Guardar los datos de los jugadores en la base de datos"""
-
-        # Insertar jugadores en la base de datos
-        self.cursor.execute(
-            "INSERT INTO jugadores (nombre, ganadas, perdidas) VALUES (?, ?, ?)",
-            (nombre, ganadas, perdidas))
+        # Verificar si el jugador ya existe
+        self.cursor.execute("SELECT 1 FROM jugadores WHERE nombre = ?", (nombre,))
+        if not self.cursor.fetchone():  # Si no existe, insertamos
+            self.cursor.execute(
+                "INSERT INTO jugadores (nombre, ganadas, perdidas) VALUES (?, ?, ?)",
+                (nombre, ganadas, perdidas))
+        else:  # Si existe, actualizamos sus estadísticas
+            self.cursor.execute(
+                "UPDATE jugadores SET ganadas = ?, perdidas = ? WHERE nombre = ?",
+                (ganadas, perdidas, nombre))
 
         # Guardar los cambios en la base de datos
         self.conn.commit()
@@ -118,6 +126,17 @@ class BBDD:
             jugadores[nombre] = {"ganadas": ganadas, "perdidas": perdidas}
 
         return jugadores
+
+    def actualizarJugador(self, nombre, ganadas, perdidas):
+        """Actualizar las estadísticas de un jugador en la base de datos."""
+        # Actualizar el jugador en la base de datos
+        self.cursor.execute(
+            "UPDATE jugadores SET ganadas = ?, perdidas = ? WHERE nombre = ?",
+            (ganadas, perdidas, nombre)
+        )
+
+        # Guardar los cambios en la base de datos
+        self.conn.commit()
 
     def close(self):
         """Cerrar la conexión a la base de datos."""

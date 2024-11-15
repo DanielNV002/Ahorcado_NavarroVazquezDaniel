@@ -9,12 +9,16 @@ def main():
 
     nombre = input("Ingrese su nombre: ").capitalize()
 
-    # Si el jugador no existe en el registro, se añade
-    if nombre not in jugadores:
-        jugadores[nombre] = {'ganadas': 0, 'perdidas': 0}
+    jugador = db.getJugador(nombre)  # Metodo que obtiene al jugador de la base de datos
+
+    if jugador is None:  # Si no existe el jugador en la base de datos
+        db.guardarJugador(nombre, ganadas=0, perdidas=0)  # Guardamos al jugador con estadísticas iniciales
+        print(f"Jugador {nombre} añadido a la base de datos.")
+    else:
+        print(f"Bienvenido de nuevo, {nombre}!")
 
     while True:
-        print("\n¡Bienvenido al juego del Ahorcado!")
+        print(f"\n¡Bienvenido al juego del Ahorcado {nombre}!")
         print("1. Jugar")
         print("2. Ver estadísticas")
         print("3. Salir")
@@ -40,8 +44,7 @@ def main():
             Juego.juegoAhorcado(nombre, tematica)
 
         elif opcion == "2":
-            #Juego.mostrar_estadisticas(jugadores, nombre)
-            print("hola")
+            Juego.mostrarEstadisticas(nombre)
 
         elif opcion == "3":
             print("\n¡Gracias por jugar!")
