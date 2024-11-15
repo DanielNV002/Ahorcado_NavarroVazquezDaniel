@@ -75,10 +75,6 @@ class BBDD:
         # Guardar los cambios
         self.conn.commit()
 
-    def getJugadores(self):
-        """Obtener todos los jugadores."""
-        self.cursor.execute("SELECT * FROM jugadores")
-        return self.cursor.fetchall()
 
     def getFrutas(self):
         """Obtener todas las frutas de la base de datos."""
@@ -95,17 +91,19 @@ class BBDD:
         self.cursor.execute("SELECT nombre FROM nombres")
         return [fila[0] for fila in self.cursor.fetchall()]
 
-    def guardar_jugadores(self, jugadores):
+    def getJugador(self, nombre):
+        """Obtener todos los jugadores."""
+        jugador = self.cursor.execute("SELECT * FROM jugadores WHERE nombre = ?", (nombre,))
+        return jugador
+
+
+    def guardarJugador(self, nombre, ganadas, perdidas):
         """Guardar los datos de los jugadores en la base de datos"""
-        # Limpiar la tabla de jugadores (si es necesario)
-        self.cursor.execute("DELETE FROM jugadores")
 
         # Insertar jugadores en la base de datos
-        for jugador, stats in jugadores.items():
-            self.cursor.execute(
-                "INSERT INTO jugadores (nombre, ganadas, perdidas) VALUES (?, ?, ?)",
-                (jugador, stats["ganadas"], stats["perdidas"])
-            )
+        self.cursor.execute(
+            "INSERT INTO jugadores (nombre, ganadas, perdidas) VALUES (?, ?, ?)",
+            (nombre, ganadas, perdidas))
 
         # Guardar los cambios en la base de datos
         self.conn.commit()

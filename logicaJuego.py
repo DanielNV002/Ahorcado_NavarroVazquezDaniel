@@ -1,67 +1,61 @@
-import os
 import random
-
 import BBDD
 
-
 class Juego:
+    def __init__(self):
+        self.db = BBDD.BBDD()
 
-    db = BBDD.BBDD
-
-    def get_palabra_aleatoria(self, tematica, db):
+    def getPalabraAleatoria(self, tematica):
+        # Obtener palabras desde la base de datos
         if tematica == "frutas":
-            lista_palabras = db.get_frutas()
+            lista_palabras = self.db.getFrutas()
         elif tematica == "componentes":
-            lista_palabras = db.get_componentes()
+            lista_palabras = self.db.getComponentes()
         elif tematica == "nombres":
-            lista_palabras = db.get_nombres()
+            lista_palabras = self.db.getNombres()
         else:
             raise ValueError("Temática no válida. Debe ser 'frutas', 'componentes' o 'nombres'.")
 
-        if not lista_palabras:  # Verificar si la lista está vacía
+        if not lista_palabras:
             print(f"Advertencia: La lista de palabras para la temática '{tematica}' está vacía.")
-        return random.choice(lista_palabras) if lista_palabras else None  # Si la lista está vacía, devuelve None
+        return random.choice(lista_palabras) if lista_palabras else None
 
-    def juego_ahorcado(jugador, tematica, db):
-        palabra = db.get_palabra_aleatoria(tematica).upper()
-        letras_adivinadas = ["_"] * len(palabra)
-        intentos = 6  # Número de intentos antes de que el monigote sea ahorcado
-        letras_erradas = []
+    def juegoAhorcado(self, nombre, tematica):
+
+        palabra = Juego.getPalabraAleatoria(self, tematica).upper()
+        intentos = 6
+        L_usadas = []
 
         while intentos > 0:
-            print(f"\nPalabra: {' '.join(letras_adivinadas)}")
-            print(f"Letras erradas: {', '.join(letras_erradas)}")
-            print(f"Intentos restantes: {intentos}")
+            # Imprimir la palabra con las letras adivinadas y guiones bajos para las no adivinadas
+            for letra in palabra:
+                if letra in L_usadas:  # Si la letra ya ha sido adivinada, la mostramos
+                    print(letra, end=" ")
+                else:
+                    print(" _ ", end=" ")
+            print("")
 
-            letra = input("Adivina una letra: ").upper()
 
-            if len(letra) != 1 or not letra.isalpha():
-                print("Por favor, ingresa una sola letra válida.")
+            print("INTRODUCE UNA LETRA")
+            letra = input("LETRA: ").upper()
+
+            # Validar que la letra no haya sido ingresada antes
+            if letra in L_usadas:
+                print(f"LA {letra} YA FUE USADA. PRUEBA OTRA.")
                 continue
 
-            if letra in letras_adivinadas or letra in letras_erradas:
-                print("Ya has adivinado o errando esta letra.")
-                continue
-
+            # Comprobar si la letra está en la palabra
             if letra in palabra:
-                for i in range(len(palabra)):
-                    if palabra[i] == letra:
-                        letras_adivinadas[i] = letra
-                if "_" not in letras_adivinadas:
-                    print(f"\n¡Felicidades! Has adivinado la palabra: {palabra}")
-                    jugador['ganadas'] += 1
-                    return
+                L_usadas.append(letra)
             else:
-                letras_erradas.append(letra)
+                print("ESA LETRA NO ESTÁ EN LA PALABRA")
                 intentos -= 1
+                print(f"TE QUEDAN {intentos} INTENTOS")
 
-        print(f"\n¡Perdiste! La palabra era: {palabra}")
-        jugador['perdidas'] += 1
+            if intentos == 0:
+                print(f"HAS PERDIDO. LA PALABRA ERA {palabra}")
 
 
-    # Mostrar estadísticas del jugador
-    def mostrar_estadisticas(jugadores, nombre):
-        if nombre in jugadores:
-            print(f"{nombre} ha ganado {jugadores[nombre]['ganadas']} partidas y perdido {jugadores[nombre]['perdidas']} partidas.")
-        else:
-            print("Jugador no encontrado.")
+            if all(letra in L_usadas for letra in palabra):
+                print(f"¡FELICIDADES! LA PALABRA ERA {palabra}")
+                break

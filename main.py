@@ -3,7 +3,9 @@ import logicaJuego
 
 
 def main():
-    jugadores = logicaJuego.Juego.cargar_jugadores()
+    db = BBDD.BBDD()
+    Juego = logicaJuego.Juego()
+    jugadores = db.cargar_jugadores()
 
     nombre = input("Ingrese su nombre: ").capitalize()
 
@@ -28,17 +30,18 @@ def main():
             if tematica_opcion == "1":
                 tematica = "frutas"
             elif tematica_opcion == "2":
-                tematica = "conceptos informáticos"
+                tematica = "componentes"
             elif tematica_opcion == "3":
-                tematica = "nombres de personas"
+                tematica = "nombres"
             else:
                 print("Opción inválida, eligiendo 'Frutas'.")
                 tematica = "frutas"
 
-            logicaJuego.Juego.juego_ahorcado(jugadores[nombre], tematica)
+            Juego.juegoAhorcado(nombre, tematica)
 
         elif opcion == "2":
-            logicaJuego.Juego.mostrar_estadisticas(jugadores, nombre)
+            #Juego.mostrar_estadisticas(jugadores, nombre)
+            print("hola")
 
         elif opcion == "3":
             print("\n¡Gracias por jugar!")
@@ -46,9 +49,6 @@ def main():
 
         else:
             print("Opción inválida, elige nuevamente.")
-
-        logicaJuego.Juego.guardar_jugadores(jugadores)
-
 
 if __name__ == "__main__":
     main()
