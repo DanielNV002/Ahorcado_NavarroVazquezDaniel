@@ -1,3 +1,5 @@
+import os
+import tkinter
 import tkinter as tk
 from tkinter import messagebox, simpledialog
 
@@ -138,35 +140,38 @@ class JuegoGUI(tk.Tk):
         for widget in self.winfo_children():
             widget.destroy()
 
-    def mostrar_imagen(self, contador):
+    def mostrar_imagen(self, contador, labelImagen):
         """Mostrar imágenes dependiendo de los intentos restantes"""
-        global photo
-        imagen = None  # Inicializar la imagen a None
+        ruta_imagenes = "resources"  # Asegúrate de que esta carpeta esté en el mismo directorio que tu script
 
+        # Asegúrate de que los archivos de imagen existan en la carpeta "resources"
         if contador == 6:
-            image = Image.open("resources/1.png")
-            photo = ImageTk.PhotoImage(image)
+            image_path = os.path.join(ruta_imagenes, "1.jpg")
         elif contador == 5:
-            image = Image.open("resources/2.png")
-            photo = ImageTk.PhotoImage(image)
+            image_path = os.path.join(ruta_imagenes, "2.png")
         elif contador == 4:
-            image = Image.open("resources/3.png")
-            photo = ImageTk.PhotoImage(image)
+            image_path = os.path.join(ruta_imagenes, "3.png")
         elif contador == 3:
-            image = Image.open("resources/4.png")
-            photo = ImageTk.PhotoImage(image)
+            image_path = os.path.join(ruta_imagenes, "4.png")
         elif contador == 2:
-            image = Image.open("resources/5.png")
-            photo = ImageTk.PhotoImage(image)
+            image_path = os.path.join(ruta_imagenes, "5.png")
         elif contador == 1:
-            image = Image.open("resources/6.png")
-            photo = ImageTk.PhotoImage(image)
+            image_path = os.path.join(ruta_imagenes, "6.png")
+        else:
+            return  # Si contador es 0 o no está en el rango, no hacemos nada
 
-        # Mostrar la imagen en un Label si se ha cargado correctamente
-        if imagen:
-            label = tk.Label(self, image=photo)
-            label.image = imagen  # Retener una referencia a la imagen
-            label.place(x=100, y=100)
+        # Cargar la imagen
+        image = Image.open(image_path)
+
+        # Redimensionar la imagen (opcional, para ajustarla al tamaño que quieras)
+        image_resized = image.resize((150, 150))  # Cambia el tamaño a lo que necesites
+
+        # Convertir la imagen a un formato compatible con tkinter
+        photo = ImageTk.PhotoImage(image_resized)
+
+        # Configurar la imagen en el Label
+        labelImagen.config(image=photo)
+        labelImagen.image = photo  # Mantener la referencia para evitar que la imagen se libere
 
 
 if __name__ == "__main__":
