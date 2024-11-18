@@ -30,43 +30,49 @@ class Juego:
         return random.choice(lista_palabras) if lista_palabras else None
 
     def juegoAhorcado(self, nombre, tematica):
-
-        palabra = Juego.getPalabraAleatoria(self, tematica).upper()
+        palabra = self.getPalabraAleatoria(tematica).upper()
         intentos = 6
-        L_usadas = []
+        L_usadas = [" "]
 
         while intentos > 0:
             # Imprimir la palabra con las letras adivinadas y guiones bajos para las no adivinadas
             for letra in palabra:
-                if letra in L_usadas:  # Si la letra ya ha sido adivinada, la mostramos
+                if letra == " ":
+                    print("   ", end="")
+                elif letra in L_usadas:
                     print(letra, end=" ")
                 else:
                     print(" _ ", end=" ")
             print("")
 
-
-            print("INTRODUCE UNA LETRA")
-            letra = input("LETRA: ").upper()
+            # Pedir una letra al jugador
+            letra = input("Introduce una letra: ").upper()
 
             # Validar que la letra no haya sido ingresada antes
             if letra in L_usadas:
-                print(f"LA {letra} YA FUE USADA. PRUEBA OTRA.")
+                print(f"La letra {letra} ya fue usada. ¡Prueba otra!")
                 continue
 
             # Comprobar si la letra está en la palabra
             if letra in palabra:
+                print(f"¡Bien! La letra {letra} está en la palabra.")
                 L_usadas.append(letra)
             else:
-                print("ESA LETRA NO ESTÁ EN LA PALABRA")
+                print(f"La letra {letra} no está en la palabra.")
                 intentos -= 1
-                print(f"TE QUEDAN {intentos} INTENTOS")
+                print(f"Te quedan {intentos} intentos.")
 
+            # Si se acaba el número de intentos
             if intentos == 0:
-                print(f"HAS PERDIDO. LA PALABRA ERA {palabra}")
-                self.db.actualizarJugador(ganadas=+0,perdidas=+1)
+                print(f"¡Has perdido! La palabra era {palabra}.")
+                perdidas = self.db.getPerdidas(nombre) + 1
+                ganadas = self.db.getGanadas(nombre)
+                self.db.actualizarJugador(nombre, ganadas, perdidas)
 
-
-            if all(letra in L_usadas for letra in palabra):
-                print(f"¡FELICIDADES! LA PALABRA ERA {palabra}")
-                self.db.actualizarJugador(ganadas=+1,perdidas=+0)
+            # Si el jugador ha adivinado toda la palabra
+            if all(letra in L_usadas for letra in palabra if letra != " "):
+                print(f"¡Felicidades! Has adivinado la palabra: {palabra}")
+                ganadas = self.db.getGanadas(nombre) + 1
+                perdidas = self.db.getPerdidas(nombre)
+                self.db.actualizarJugador(nombre, ganadas, perdidas)
                 break

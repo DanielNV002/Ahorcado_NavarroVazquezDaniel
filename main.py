@@ -1,3 +1,4 @@
+
 import BBDD
 import logicaJuego
 
@@ -7,6 +8,11 @@ def main():
     Juego = logicaJuego.Juego()
     jugadores = db.cargar_jugadores()
 
+    print("--- Jugadores guardados ---")
+    for j in jugadores:
+        print(j, end=" / ")
+
+    print("")
     nombre = input("Ingrese su nombre: ").capitalize()
 
     jugador = db.getJugador(nombre)  # Metodo que obtiene al jugador de la base de datos

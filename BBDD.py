@@ -135,8 +135,25 @@ class BBDD:
             (ganadas, perdidas, nombre)
         )
 
+    def getGanadas(self, nombre):
+        self.cursor.execute(
+            "SELECT ganadas FROM jugadores WHERE nombre = ?", (nombre,)
+        )
+        result = self.cursor.fetchone()
+        if result:
+            return result[0]
+        return 0
+
+    def getPerdidas(self, nombre):
+        self.cursor.execute(
+            "SELECT perdidas FROM jugadores WHERE nombre = ?", (nombre,)
+        )
+        result = self.cursor.fetchone()
+        if result:
+            return result[0]
+        return 0
+
         # Guardar los cambios en la base de datos
-        self.conn.commit()
 
     def close(self):
         """Cerrar la conexión a la base de datos."""
