@@ -1,7 +1,7 @@
+import random
 import sqlite3
 
 class BBDD:
-
     def __init__(self):
         # Inicializamos la conexión y el cursor como atributos de la clase
         self.conn = sqlite3.connect("listaObjetosAhorcado.db")
@@ -91,6 +91,21 @@ class BBDD:
         self.cursor.execute("SELECT nombre FROM nombres")
         return [fila[0] for fila in self.cursor.fetchall()]
 
+    def getPalabraAleatoria(self, tematica):
+        """Obtener una palabra aleatoria según la temática."""
+        if tematica == "frutas":
+            lista_palabras = self.getFrutas()
+        elif tematica == "componentes":
+            lista_palabras = self.getComponentes()
+        elif tematica == "nombres":
+            lista_palabras = self.getNombres()
+        else:
+            raise ValueError("Temática no válida. Debe ser 'frutas', 'componentes' o 'nombres'.")
+
+        if not lista_palabras:
+            print(f"Advertencia: La lista de palabras para la temática '{tematica}' está vacía.")
+        return random.choice(lista_palabras) if lista_palabras else None
+
     def getJugador(self, nombre):
         """Obtener los datos de un jugador de la base de datos."""
         self.cursor.execute("SELECT nombre, ganadas, perdidas FROM jugadores WHERE nombre = ?", (nombre,))
@@ -134,6 +149,9 @@ class BBDD:
             "UPDATE jugadores SET ganadas = ?, perdidas = ? WHERE nombre = ?",
             (ganadas, perdidas, nombre)
         )
+        self.conn.commit()  # Asegúrate de hacer el commit después de ejecutar la consulta
+
+        print("jugador Actualizado")
 
     def getGanadas(self, nombre):
         self.cursor.execute(
@@ -153,7 +171,9 @@ class BBDD:
             return result[0]
         return 0
 
-        # Guardar los cambios en la base de datos
+    # def borrar_jugadores(self):
+    #     self.cursor.execute("DROP TABLE jugadores")
+    #     # Guardar los cambios en la base de datos
 
     def close(self):
         """Cerrar la conexión a la base de datos."""
