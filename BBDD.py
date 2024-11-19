@@ -149,7 +149,7 @@ class BBDD:
             "UPDATE jugadores SET ganadas = ?, perdidas = ? WHERE nombre = ?",
             (ganadas, perdidas, nombre)
         )
-        self.conn.commit()  # Asegúrate de hacer el commit después de ejecutar la consulta
+        self.conn.commit()
 
         print("jugador Actualizado")
 

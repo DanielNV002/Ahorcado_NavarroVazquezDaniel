@@ -120,7 +120,8 @@ def boton_presionado(letra, boton):
         print(f"¡Felicidades! Has adivinado la palabra: {palabra}")
         ganadas = db.getGanadas(nombre) + 1
         perdidas = db.getPerdidas(nombre)
-        db.actualizarJugador(nombre, ganadas, perdidas)
+        print(ganadas, perdidas)
+        db.actualizarJugador(nombre.capitalize(), ganadas, perdidas)
         messagebox.showinfo("¡Felicidades!", f"Has adivinado la palabra: {palabra}")
         desactivar_botones()  # Desactivamos los botones después de ganar
         mostrarEstadisticas()
@@ -131,7 +132,8 @@ def boton_presionado(letra, boton):
         print(f"¡Has perdido! La palabra era {palabra}.")
         perdidas = db.getPerdidas(nombre) + 1
         ganadas = db.getGanadas(nombre)
-        db.actualizarJugador(nombre, ganadas, perdidas)
+        print(ganadas, perdidas)
+        db.actualizarJugador(nombre.capitalize(), ganadas, perdidas)
         messagebox.showinfo("Perdiste", f"Has perdido. La palabra era: {palabra}")
         desactivar_botones()  # Desactivamos los botones después de perder
         mostrarEstadisticas()
