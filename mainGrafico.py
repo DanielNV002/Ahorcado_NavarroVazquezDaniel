@@ -1,6 +1,4 @@
-import random
 import tkinter as tk
-from contextlib import nullcontext
 from tkinter import PhotoImage, messagebox
 
 import BBDD
